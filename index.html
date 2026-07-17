@@ -2211,7 +2211,7 @@ function pdfFromDraft(draft, numero){
   doc.text(numero, rightX, 18, {align:"right"});
   doc.setFont("helvetica","normal"); doc.setFontSize(isPos?7:9);
   doc.text(`${draft.tipo}`, rightX, 24, {align:"right"});
-  doc.text(`Data: ${draft.data}`, rightX, isPos?29:24+(isPos?0:0), {align:"right"});
+  doc.text(`Data: ${draft.data}`, rightX, isPos?29:30+(isPos?0:0), {align:"right"});
   doc.setDrawColor(200); doc.line(14, isPos?33:34, rightX, isPos?33:34);
   doc.setFontSize(isPos?8:10); doc.text(`Cliente: ${draft.cliente}`, 14, isPos?39:42);
 
@@ -2249,7 +2249,7 @@ function pdfFromDraft(draft, numero){
   doc.setFont("helvetica","normal"); doc.setFontSize(9);
   doc.text(`Método de pagamento: ${draft.pagamento}`,14,y); y+=8;
   if(draft.nota){ doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.text(draft.nota,14,y,{maxWidth:pageW-28}); y+=10; }
-  if(!isPos && e.bancos.length){
+  if(!isPos && e.bancos.length && draft.pagamento === "Transferência"){
     doc.setFont("helvetica","bold"); doc.setFontSize(8.5); doc.text("Dados bancários:",14,y); y+=5;
     doc.setFont("helvetica","normal"); doc.setFontSize(7.5);
     e.bancos.forEach(b=>{
