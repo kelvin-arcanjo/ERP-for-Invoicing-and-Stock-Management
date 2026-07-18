@@ -2197,24 +2197,58 @@ function pdfFromDraft(draft, numero){
   const doc = new jsPDF({unit:"mm", format:cfg.format, orientation:cfg.orientation});
   const pageW = doc.internal.pageSize.getWidth();
   const rightX = pageW - 14;
+  const padX = isPos ? 4 : 14; 
+  const posRightX = pageW - 4;
 
-  doc.setFont("helvetica","bold"); doc.setFontSize(isPos?11:16); doc.text(e.nomeComercial.toUpperCase(), 14, 18);
-  doc.setFont("helvetica","normal"); doc.setFontSize(isPos?7:9);
+  // --- . NOME DA EMPRESA ---
+  doc.setFont("helvetica","bold")
   if(isPos){
-    doc.text(`NIF: ${e.nif}`, 14, 24);
-    doc.text(`Tel: ${e.tel1}${whatsappNum?` · WhatsApp: ${whatsappNum}`:""}`, 14, 29);
+    doc.setFontSize(11)
+    doc.text(`${e.nome}`, pageW / 2, 12,{align:"center"});
+
   } else {
+    doc.setFontSize(20)
+    doc.text(`${e.nome}`,14, 18)
+  }
+  
+  // --- . DADOS DO CABEÇALHO ---
+  doc.setFont("helvetica","normal");
+  if(isPos){
+    doc.setFontSize(8);
+    doc.text(`NIF: ${e.nif}`, pageW / 2, 17, { align: "center" });
+    doc.text(`Tel: ${e.tel1}${whatsappNum ? ` · WA: ${whatsappNum}` : ""}`, pageW / 2, 22, { align: "center" });
+
+   // --- BLOCO EXCLUSIVO POS: Dados do Documento empilhados abaixo (Y maiores) ---
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text(numero, pageW / 2, 28, { align: "center" }); // O número (ex: RASCUNHO_Factura) ganha destaque central
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.text(`Tipo: ${draft.tipo}`, pageW / 2, 33, { align: "center" });
+    doc.text(`Data: ${draft.data}`, pageW / 2, 38, { align: "center" });
+
+    // Linha divisória e Cliente ajustados para o Y correto do talão
+    doc.setDrawColor(200); 
+    doc.line(padX, 42, posRightX, 42);
+    doc.text(`Cliente: ${draft.cliente}`, padX, 47);
+
+  } else {
+    doc.setFontSize(9)
     doc.text(`${e.endereco}, ${e.municipio} · NIF ${e.nif}`, 14, 24);
     doc.text(`Tel: ${e.tel1}${e.tel2?` / ${e.tel2}`:""}${whatsappNum?` · WhatsApp: ${whatsappNum}`:""} · Regime: ${configFiscal.regime}`, 14, 29);
   }
-  doc.setFont("helvetica","bold"); doc.setFontSize(isPos?9:12);
-  doc.text(numero, rightX, 18, {align:"right"});
-  doc.setFont("helvetica","normal"); doc.setFontSize(isPos?7:9);
-  doc.text(`${draft.tipo}`, rightX, 24, {align:"right"});
-  doc.text(`Data: ${draft.data}`, rightX, isPos?29:30+(isPos?0:0), {align:"right"});
-  doc.setDrawColor(200); doc.line(14, isPos?33:34, rightX, isPos?33:34);
-  doc.setFontSize(isPos?8:10); doc.text(`Cliente: ${draft.cliente}`, 14, isPos?39:42);
 
+  // --- Caso não for POS ---
+  if(!isPos){
+  doc.setFont("helvetica","bold"); doc.setFontSize(12);
+  doc.text(numero, rightX, 18, {align:"right"});
+  doc.setFont("helvetica","normal"); doc.setFontSize(9);
+  doc.text(`${draft.tipo}`, rightX, 24, {align:"right"});
+  doc.text(`Data: ${draft.data}`, rightX, 30, {align:"right"});
+  doc.setDrawColor(200); doc.line(14, 34, rightX, 34);
+  doc.setFontSize(10); doc.text(`Cliente: ${draft.cliente}`, 14, 42);
+}
   let y = isPos?46:52;
   doc.setFont("helvetica","bold"); doc.setFontSize(isPos?7:9);
   doc.text("Produto",14,y); doc.text("Qtd",Math.max(90,rightX-90),y); doc.text("P.Unit.",Math.max(105,rightX-75),y);
