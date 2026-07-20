@@ -2295,11 +2295,18 @@ if(isPos){
   // --- EXCLUSIVO A4: Desenha o Cabeçalho de Colunas Primeiro ---
   doc.setFont("helvetica", "bold"); 
   doc.setFontSize(9);
+
+  // Proporções calibradas com base no A4...
+  const colQtd = rightX - rightX*0.459;
+  const colPUnit = rightX - rightX*0.383;
+  const colIva = rightX - rightX*0.230;
+  const colTotal = rightX - rightX*0.102;
+
   doc.text("Produto", 14, y); 
-  doc.text("Qtd", Math.max(90, rightX - 90), y); 
-  doc.text("P.Unit.", Math.max(105, rightX - 75), y);
-  doc.text("IVA", Math.max(130, rightX - 45), y); 
-  doc.text("Total", rightX - 20, y);
+  doc.text("Qtd", colQtd, y); 
+  doc.text("P.Unit.", colPUnit, y);
+  doc.text("IVA", colIva, y); 
+  doc.text("Total", colTotal, y);
   
   doc.setFont("helvetica", "normal");
   doc.line(14, y + 2, rightX, y + 2);
@@ -2312,10 +2319,10 @@ if(isPos){
     const total = base * (1 + ivaEf / 100);
 
     doc.text(String(l.nome).slice(0, 30), 14, y);
-    doc.text(String(l.qtd), Math.max(90, rightX - 90), y);
-    doc.text(kz(l.preco), Math.max(105, rightX - 75), y);
-    doc.text(ivaEf + "%", Math.max(130, rightX - 45), y);
-    doc.text(kz(Math.round(total)), rightX - 20, y);
+    doc.text(String(l.qtd), colQtd, y);
+    doc.text(kz(l.preco), colPUnit, y);
+    doc.text(ivaEf + "%", colIva, y);
+    doc.text(kz(Math.round(total)), colTotal, y);
     y += 7;
 
     if (y > doc.internal.pageSize.getHeight() - 40) { 
