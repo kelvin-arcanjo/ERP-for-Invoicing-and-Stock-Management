@@ -2192,6 +2192,7 @@ function pdfFromDraft(draft, numero){
   const { jsPDF } = window.jspdf;
   const e = empresaInfo;
   const isPos = configFiscal.layoutPapel.startsWith("POS");
+  const isCompacto = isPos || configFiscal.layoutPapel === "A6";
   const whatsappNum = e.whatsappIgual ? e.tel1 : e.whatsapp;
   const cfg = pdfFormatFor(configFiscal.layoutPapel);
   const doc = new jsPDF({unit:"mm", format:cfg.format, orientation:cfg.orientation});
@@ -2202,7 +2203,7 @@ function pdfFromDraft(draft, numero){
 
   // --- . NOME DA EMPRESA ---
   doc.setFont("helvetica","bold")
-  if(isPos){
+  if(isCompacto){
     doc.setFontSize(11)
     doc.text(`${e.nome}`, pageW / 2, 12,{align:"center"});
 
@@ -2213,7 +2214,7 @@ function pdfFromDraft(draft, numero){
   
   // --- . DADOS DO CABEÇALHO ---
   doc.setFont("helvetica","normal");
-  if(isPos){
+  if(isCompacto){
     doc.setFontSize(8);
     doc.text(`NIF: ${e.nif}`, pageW / 2, 17, { align: "center" });
     doc.text(`Tel: ${e.tel1}${whatsappNum ? ` · WA: ${whatsappNum}` : ""}`, pageW / 2, 22, { align: "center" });
@@ -2240,7 +2241,7 @@ function pdfFromDraft(draft, numero){
   }
 
   // --- Caso não for POS ---
-  if(!isPos){
+  if(!isCompacto){
   doc.setFont("helvetica","bold"); doc.setFontSize(12);
   doc.text(numero, rightX, 18, {align:"right"});
   doc.setFont("helvetica","normal"); doc.setFontSize(9);
@@ -2253,7 +2254,7 @@ function pdfFromDraft(draft, numero){
 
 let y = isPos?55:52;
   
-if(isPos){
+if(isCompacto){
   //Ajuste de Margens...
     const mX = 6
     const pW = pageW - 6
@@ -2333,7 +2334,7 @@ if(isPos){
 }
 
 // --- Totais ---
-if(isPos){
+if(isCompacto){
   const mX = 6;
   const centroX = pageW / 2;
   const larguraDisponivel = pageW - 12; // Espaço útil entre as margens esquerda e direita
